@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atribuições do Departamento Pessoal</title>
+<style>
+  :root{
+    --ink:#1c2321; --paper:#faf8f3; --panel:#ffffff; --line:#e4ded1;
+    --muted:#6b6a63;
+    --executa:#2f6f4f; --executa-bg:#e6f2ea;
+    --aprova:#8a5a1c; --aprova-bg:#f6ecdb;
+    --informa:#3a5a8a; --informa-bg:#e6edf6;
+    --acompanha:#6d4a7c; --acompanha-bg:#efe7f3;
+    --outro:#5a5a52; --outro-bg:#eeece6;
+    --na:#b8b3a6;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Segoe UI",-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5; font-size:15px;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 80px}
+
+  header.masthead{
+    padding:44px 0 30px; border-bottom:3px solid var(--ink);
+    margin-bottom:26px;
+  }
+  .kicker{font-size:12.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); font-weight:600; margin-bottom:10px}
+  h1{font-family:Georgia,"Times New Roman",serif; font-weight:600;
+    font-size:clamp(28px,4.6vw,42px); line-height:1.08; margin:0 0 10px;
+    letter-spacing:-.01em}
+  .sub{color:var(--muted); max-width:62ch; margin:0}
+  .stat{display:flex; gap:30px; margin-top:22px; flex-wrap:wrap}
+  .stat b{font-family:Georgia,serif; font-size:26px; display:block; line-height:1}
+  .stat span{font-size:12.5px; color:var(--muted)}
+
+  /* legenda */
+  .legend{background:var(--panel); border:1px solid var(--line);
+    border-radius:12px; padding:18px 20px; margin-bottom:26px}
+  .legend h2{font-size:13px; text-transform:uppercase; letter-spacing:.1em;
+    color:var(--muted); margin:0 0 14px; font-weight:700}
+  .legend-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:14px}
+  .leg{display:flex; gap:11px; align-items:flex-start}
+  .chip{flex:none; margin-top:2px; width:13px; height:13px; border-radius:4px}
+  .leg-t{font-weight:600; font-size:13.5px}
+  .leg-d{font-size:12.5px; color:var(--muted); line-height:1.35}
+
+  /* controles */
+  .controls{position:sticky; top:0; z-index:20; background:var(--paper);
+    padding:14px 0 14px; margin-bottom:8px; border-bottom:1px solid var(--line)}
+  .controls-inner{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+  .search{flex:1 1 240px; min-width:200px; position:relative}
+  .search input{width:100%; padding:11px 14px 11px 38px; border:1px solid var(--line);
+    border-radius:9px; font-size:14.5px; background:var(--panel); color:var(--ink)}
+  .search input:focus{outline:2px solid var(--executa); outline-offset:1px; border-color:transparent}
+  .search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; opacity:.45}
+  .filterlab{font-size:12.5px; color:var(--muted); font-weight:600}
+  .roles{display:flex; gap:6px; flex-wrap:wrap}
+  .roles button{padding:8px 13px; border:1px solid var(--line); background:var(--panel);
+    border-radius:8px; font-size:13px; cursor:pointer; color:var(--ink); font-weight:500;
+    transition:.12s}
+  .roles button:hover{border-color:var(--ink)}
+  .roles button.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .count{font-size:12.5px; color:var(--muted); margin:6px 2px 20px}
+
+  /* categorias */
+  .cat{margin-bottom:34px; scroll-margin-top:120px}
+  .cat-head{display:flex; align-items:baseline; gap:12px; margin:0 0 14px;
+    padding-bottom:9px; border-bottom:2px solid var(--line)}
+  .cat-head h3{font-family:Georgia,serif; font-size:21px; font-weight:600; margin:0}
+  .cat-head .n{font-size:12.5px; color:var(--muted); font-weight:600}
+
+  .row{background:var(--panel); border:1px solid var(--line); border-radius:11px;
+    padding:15px 17px; margin-bottom:10px; display:grid;
+    grid-template-columns:1.6fr 1fr 1fr 1fr 1fr; gap:14px; align-items:center}
+  .proc{font-weight:600; font-size:14.5px; line-height:1.3}
+  .cellhead{display:none}
+  .assign{display:flex; flex-direction:column; gap:3px}
+  .who{font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase;
+    letter-spacing:.03em}
+  .badge{display:inline-flex; align-items:center; font-size:12.5px; font-weight:600;
+    padding:4px 9px; border-radius:6px; width:fit-content; line-height:1.25}
+  .b-executa{color:var(--executa); background:var(--executa-bg)}
+  .b-aprova{color:var(--aprova); background:var(--aprova-bg)}
+  .b-informa{color:var(--informa); background:var(--informa-bg)}
+  .b-acompanha{color:var(--acompanha); background:var(--acompanha-bg)}
+  .b-outro{color:var(--outro); background:var(--outro-bg)}
+  .b-na{color:var(--na); background:transparent; font-weight:500}
+  mark{background:#fdf0b8; color:inherit; border-radius:2px; padding:0 1px}
+
+  .empty{text-align:center; color:var(--muted); padding:50px 20px; font-size:15px;
+    display:none}
+
+  footer{margin-top:50px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--muted)}
+
+  @media(max-width:760px){
+    .row{grid-template-columns:1fr; gap:9px; padding:14px 15px}
+    .proc{font-size:15px; padding-bottom:4px; border-bottom:1px dashed var(--line)}
+    .assign{flex-direction:row; justify-content:space-between; align-items:center}
+    .who{font-size:11.5px}
+    .b-na{opacity:.55}
+    .stat{gap:22px}
+  }
+  @media print{
+    .controls,.legend-grid .leg-d{display:auto}
+    .controls{position:static}
+    .row{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="kicker">Nova Estruturação · Matriz de Responsabilidades</div>
+    <h1>Atribuições do Departamento Pessoal</h1>
+    <p class="sub">Quem faz o quê em cada processo do DP. Use a busca para achar um processo, ou filtre por responsável para ver só o que cabe a cada pessoa.</p>
+    <div class="stat">
+      <div><b id="s-proc">–</b><span>processos</span></div>
+      <div><b>4</b><span>responsáveis</span></div>
+      <div><b id="s-cat">–</b><span>áreas</span></div>
+    </div>
+  </header>
+
+  <section class="legend">
+    <h2>Como ler as responsabilidades</h2>
+    <div class="legend-grid">
+      <div class="leg"><span class="chip" style="background:var(--executa)"></span><div><div class="leg-t">Executa</div><div class="leg-d">Faz o trabalho na prática, é o responsável direto.</div></div></div>
+      <div class="leg"><span class="chip" style="background:var(--aprova)"></span><div><div class="leg-t">Aprova</div><div class="leg-d">Valida e autoriza antes de seguir adiante.</div></div></div>
+      <div class="leg"><span class="chip" style="background:var(--informa)"></span><div><div class="leg-t">Informa</div><div class="leg-d">Fornece dados ou é comunicado sobre a atividade.</div></div></div>
+      <div class="leg"><span class="chip" style="background:var(--acompanha)"></span><div><div class="leg-t">Acompanha</div><div class="leg-d">Monitora o andamento sem executar diretamente.</div></div></div>
+      <div class="leg"><span class="chip" style="background:var(--na);opacity:.5"></span><div><div class="leg-t">Não participa</div><div class="leg-d">Sem envolvimento neste processo.</div></div></div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="controls-inner">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="q" type="text" placeholder="Buscar processo... (ex.: férias, admissão, FGTS)">
+      </div>
+      <span class="filterlab">Responsável:</span>
+      <div class="roles" id="roles"></div>
+    </div>
+  </div>
+  <div class="count" id="count"></div>
+
+  <main id="list"></main>
+  <div class="empty" id="empty">Nenhum processo encontrado. Tente outra palavra ou limpe o filtro.</div>
+
+  <footer>
+    Gerado a partir da planilha original “Nova Distribuição — Atribuições DP”. Responsáveis: Tesoureiro Escolar, RH, Tesoureiro Assistente e DP NET.
+  </footer>
+</div>
+
+<script>
+const BUNDLE = {
+  "cats": [
+    "Admissão",
+    "Cadastro e Contratos",
+    "Jornada, Férias e Afastamentos",
+    "Folha de Pagamento",
+    "Pagamentos e Financeiro",
+    "Benefícios",
+    "Saúde e Segurança (SST)",
+    "Relações Sindicais",
+    "Rescisão",
+    "Gestão e Relatórios"
+  ],
+
+  "data": [
+
+    {
+      "processo": "Atendimento e Comunicação - c/ Empregado",
+      "cat": "Gestão e Relatórios",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Atendimento e Comunicação - c/ Gestores",
+      "cat": "Gestão e Relatórios",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "executa",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "executa",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Auditoria Interna - Resposta",
+      "cat": "Gestão e Relatórios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Controle de Contratos de Estagiários e Aprendizes",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Controle de Empréstimos Consignados IAJA",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Controle de Jornada e Ponto - AHGORA - Jovem Aprendiz",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Controle de Mapa de Férias e Agendamentos",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Digitalização de Documentação",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Elaboração de Declarações",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Elaboração de Relatórios Gerenciais",
+      "cat": "Gestão e Relatórios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "informa",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "informa",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Informações para Comissão Admitidos, Desligados e Transferidos",
+      "cat": "Gestão e Relatórios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Gestão de Benefícios Legais - Parâmetros e Operacionalização",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Gestão de Benefícios Denominacionais - Controle e Liberação",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Lançamentos de Ocorrências - CONECTARH",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Registro de Benefícios via APS",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Relações Sindicais - Acompanhamento e Retirada de CCT",
+      "cat": "Relações Sindicais",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Relatórios de Ajuda de Custo - Conferência e Processamento",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Relatórios de Viagens - Conferência e Processamento",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "SST (Segurança e Saúde do Trabalho) - PGR e PCMSO - ASOs",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Tratativas Contábeis - Estorno, Configurações e Correções",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Solicitação no CONECTARH",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Cadastro no APS",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Admissão no e-Social - ABM",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Documentos Pós-Admissão - Recolhe Assinatura",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "acompanhamento",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "acompanha",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Documentos Pós-Admissão - Envio dos Documentos",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "acompanhamento",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "acompanha",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Férias - Cálculo e Pagamento",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Férias - Controle de Documentos",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "informa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "informa"
+      }
+    },
+
+    {
+      "processo": "RPS - Registro de Autônomos",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "RPS - Solicitação no CONECTARH",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "RPS - Validação, Cálculo, Conferência e Pagamento",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Alterações Cadastrais e Contratuais - APS",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Aditivos Contratuais",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Cadastramento de Atestados",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "FGTS Digital",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Cadastro de Afastamentos APS eSocial/ABM",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Transferências",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "informa/aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Solicitação de Adiantamentos de Salário e Décimo Terceiro",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Importação de Ocorrências e Verbas para o APS",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Folha de Pagamento - Cálculo e Conferência",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Acompanhamento e Correção de Eventos do e-Social",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "AUDIT - Elaboração",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "AUDIT - Lançamento",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "informa",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "informa",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Cálculo de Rescisão",
+      "cat": "Rescisão",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Homologação da Rescisão",
+      "cat": "Rescisão",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "informa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "informa"
+      }
+    },
+
+    {
+      "processo": "Plano de Saúde - Inclusão e Exclusão",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Plano de Saúde - Configura Plano",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "DIRF - Conferência e Ajustes",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "DIRF - Envio de Informe de Rendimentos",
+      "cat": "Folha de Pagamento",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Recarga de Vale-Transporte",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Cálculo de Mobilidade + Recarga Swile",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "acompanhamento",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "acompanha",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Solicitação de Novo Cartão de Vale-Transporte; Formatação",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "acompanhamento"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "acompanha"
+      }
+    },
+
+    {
+      "processo": "Encaminhar Boletos de Jovem Aprendiz para Pagamento",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Acompanhamento de Exames Periódicos",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "informa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "informa"
+      }
+    },
+
+    {
+      "processo": "Acompanhamento de Funcionários Afastados",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "acompanhamento"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "acompanha"
+      }
+    },
+
+    {
+      "processo": "Envio de Arquivos do APS para Pagamento",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "acompanhamento",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "acompanha",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Orientar sobre Oposição ao Desconto Sindical",
+      "cat": "Relações Sindicais",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {/*
+      "processo": "Solicitar Certidão Negativa de Antecedentes Criminais para Admissões",
+      "cat": "Admissão",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    */},
+
+    {
+      "processo": "Envio de Boleto do Ponto Eletrônico para Pagamento",
+      "cat": "Jornada, Férias e Afastamentos",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Pagamentos de Pensão Alimentícia",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Pagamentos de Contribuições Sindicais",
+      "cat": "Relações Sindicais",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {/*
+      "processo": "Acompanhamento de Períodos de Contratação SAAE",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    */},
+
+    {
+      "processo": "Envio de Pagamento PROASA",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Pagamento IAJA",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Pagamento FGTS",
+      "cat": "Pagamentos e Financeiro",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Pagamento Medicina do Trabalho",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "aprova",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Acompanhamento de Cota de PCD e Jovem Aprendiz",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "x",
+        "Tesoureiro Assistente": "acompanhamento",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "acompanha",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Envio de Eventos de EPI para Novos Contratados",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Entrega de EPIs",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "x",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Cadastro e Atualização no SIGA",
+      "cat": "Cadastro e Contratos",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "informa",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Cadastro de Seguro de Vida",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "x"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "na"
+      }
+    },
+
+    {
+      "processo": "Periodicidade de EPI",
+      "cat": "Saúde e Segurança (SST)",
+      "papeis": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "acompanhamento"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "executa",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "acompanha"
+      }
+    },
+
+    {
+      "processo": "Envio de Dados para Voto Letra",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "",
+        "Tesoureiro Assistente": "acompanhamento",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "acompanha",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Plano Odontológico - Inclusão, Exclusão e Envio para Pagamento",
+      "cat": "Benefícios",
+      "papeis": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "",
+        "Tesoureiro Assistente": "acompanhamento",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "informa",
+        "RH": "na",
+        "Tesoureiro Assistente": "acompanha",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Seguro-Desemprego - Emissão do Formulário",
+      "cat": "Rescisão",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    },
+
+    {
+      "processo": "Guia dos Professores Sindicalizados",
+      "cat": "Relações Sindicais",
+      "papeis": {
+        "Tesoureiro Escolar": "x",
+        "RH": "",
+        "Tesoureiro Assistente": "x",
+        "DP NET": "executa"
+      },
+      "tipos": {
+        "Tesoureiro Escolar": "na",
+        "RH": "na",
+        "Tesoureiro Assistente": "na",
+        "DP NET": "executa"
+      }
+    }
+
+  ]
+};
+const CATS = BUNDLE.cats, DATA = BUNDLE.data;
+const ROLES = ["Tesoureiro Escolar","RH","Tesoureiro Assistente","DP NET"];
+const ROLE_SHORT = {"Tesoureiro Escolar":"Tes. Escolar","RH":"RH","Tesoureiro Assistente":"Tes. Assistente","DP NET":"DP NET"};
+const LABEL = {executa:"Executa",aprova:"Aprova",informa:"Informa",acompanha:"Acompanha",outro:null,na:"—"};
+
+document.getElementById('s-proc').textContent = DATA.length;
+document.getElementById('s-cat').textContent = CATS.length;
+
+let activeRole = null, query = "";
+
+// filtros de responsável
+const rolesEl = document.getElementById('roles');
+[["Todos",null],...ROLES.map(r=>[ROLE_SHORT[r],r])].forEach(([lab,val])=>{
+  const b=document.createElement('button');
+  b.textContent=lab; if(val===null) b.classList.add('on');
+  b.onclick=()=>{activeRole=val; [...rolesEl.children].forEach(c=>c.classList.remove('on')); b.classList.add('on'); render();};
+  rolesEl.appendChild(b);
+});
+
+document.getElementById('q').addEventListener('input',e=>{query=e.target.value.trim().toLowerCase(); render();});
+
+function badge(role, val, tipo){
+  if(tipo==='na') return `<span class="badge b-na">—</span>`;
+  const cls = 'b-'+tipo;
+  const text = LABEL[tipo] || val.charAt(0).toUpperCase()+val.slice(1);
+  return `<span class="badge ${cls}">${text}</span>`;
+}
+function hl(txt){
+  if(!query) return txt;
+  const i=txt.toLowerCase().indexOf(query);
+  if(i<0) return txt;
+  return txt.slice(0,i)+'<mark>'+txt.slice(i,i+query.length)+'</mark>'+txt.slice(i+query.length);
+}
+
+function render(){
+  const list=document.getElementById('list');
+  list.innerHTML='';
+  let shown=0;
+  CATS.forEach(cat=>{
+    let items=DATA.filter(d=>d.cat===cat);
+    if(query) items=items.filter(d=>d.processo.toLowerCase().includes(query));
+    if(activeRole) items=items.filter(d=>d.tipos[activeRole]!=='na');
+    if(!items.length) return;
+    shown+=items.length;
+    const sec=document.createElement('section'); sec.className='cat';
+    sec.innerHTML=`<div class="cat-head"><h3>${cat}</h3><span class="n">${items.length}</span></div>`;
+    items.forEach(d=>{
+      const row=document.createElement('div'); row.className='row';
+      let cells=`<div class="proc">${hl(d.processo)}</div>`;
+      ROLES.forEach(r=>{
+        const dim = activeRole && r!==activeRole ? 'style="opacity:.4"' : '';
+        cells+=`<div class="assign" ${dim}><span class="who">${ROLE_SHORT[r]}</span>${badge(r,d.papeis[r],d.tipos[r])}</div>`;
+      });
+      row.innerHTML=cells;
+      sec.appendChild(row);
+    });
+    list.appendChild(sec);
+  });
+  document.getElementById('empty').style.display = shown?'none':'block';
+  const c=document.getElementById('count');
+  if(query||activeRole){
+    c.textContent = `Mostrando ${shown} de ${DATA.length} processos`
+      + (activeRole?` · responsabilidade de ${activeRole}`:'');
+  } else c.textContent = `${DATA.length} processos em ${CATS.length} áreas`;
+}
+render();
+</script>
+</body>
+</html>
